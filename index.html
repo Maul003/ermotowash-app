@@ -24,6 +24,16 @@
         /* Sembunyikan scrollbar tapi tetap bisa scroll */
         ::-webkit-scrollbar { width: 0px; background: transparent; }
         body { -webkit-tap-highlight-color: transparent; }
+        
+        /* Gambar default beranda jika tidak ada promo */
+        .bg-aesthetic {
+            background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://images.unsplash.com/photo-1552930294-6b595f4c2974?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80');
+            background-size: cover;
+            background-position: center;
+        }
+        
+        .tab-content { display: none; }
+        .tab-content.active { display: flex; }
     </style>
 </head>
 <body class="bg-gray-100 h-[100dvh] flex flex-col font-sans overflow-hidden">
@@ -44,151 +54,214 @@
         
         <!-- LOGIN PELANGGAN -->
         <div id="loginSection" class="p-6 flex flex-col items-center justify-center h-full text-center">
-            <div class="bg-yellow-100 p-4 rounded-full mb-4">
-                <i class="fa-solid fa-hands-bubbles text-4xl text-er-yellow"></i>
+            <div class="bg-yellow-100 p-4 rounded-full mb-4 shadow-inner">
+                <i class="fa-solid fa-hands-bubbles text-5xl text-er-yellow"></i>
             </div>
-            <h2 class="text-2xl font-bold text-gray-800 mb-2">Selamat Datang!</h2>
-            <p class="text-gray-500 mb-6 text-sm">Silakan masukkan nama Anda untuk mulai memesan layanan antar-jemput cuci motor.</p>
-            <input type="text" id="userNameInput" placeholder="Nama Anda" class="w-full p-3 border border-gray-300 rounded-xl mb-4 focus:outline-none focus:border-er-yellow focus:ring-1 focus:ring-er-yellow">
-            <button id="btnLogin" class="w-full bg-er-dark text-er-yellow font-bold py-3 rounded-xl shadow-md active:scale-95 transition-transform">Masuk Aplikasi</button>
+            <h2 class="text-2xl font-black text-gray-800 mb-2">Selamat Datang!</h2>
+            <p class="text-gray-500 mb-8 text-sm">Silakan masukkan nama Anda untuk mulai memesan layanan antar-jemput cuci motor.</p>
+            <input type="text" id="userNameInput" placeholder="Nama Panggilan Anda" class="w-full p-4 border-2 border-gray-200 rounded-2xl mb-4 focus:outline-none focus:border-er-yellow text-center font-bold text-lg shadow-sm transition">
+            <button id="btnLogin" class="w-full bg-er-dark text-er-yellow font-bold text-lg py-4 rounded-2xl shadow-lg active:scale-95 transition-transform"><i class="fa-solid fa-right-to-bracket mr-2"></i> Masuk Aplikasi</button>
         </div>
 
         <!-- TAB: BERANDA -->
-        <div id="home" class="tab-content hidden p-4">
-            <div id="promoBanner" class="bg-er-dark text-white p-4 rounded-2xl shadow-lg mb-6 relative overflow-hidden">
-                <div class="relative z-10">
-                    <h2 class="text-xl font-bold text-er-yellow mb-1" id="bannerTitle">Promo Spesial!</h2>
-                    <p class="text-sm text-gray-300" id="bannerDesc">Diskon 10% untuk cuci full detailing hari ini.</p>
-                </div>
-                <i class="fa-solid fa-sparkles absolute -bottom-4 -right-2 text-6xl text-white opacity-10"></i>
+        <div id="home" class="hidden flex-col p-4 tab-content">
+            <!-- Tempat Banner Dinamis -->
+            <div id="bannerContainer" class="mb-6">
+                <!-- Diisi oleh Javascript -->
             </div>
             
             <div class="grid grid-cols-2 gap-3 mb-6">
-                <a href="https://wa.me/6281234567890" target="_blank" class="bg-green-100 text-green-700 p-3 rounded-xl flex items-center justify-center gap-2 font-bold shadow-sm active:scale-95 transition">
-                    <i class="fa-brands fa-whatsapp text-lg"></i> WhatsApp
+                <a href="https://wa.me/6281234567890" target="_blank" class="bg-green-100 text-green-700 p-4 rounded-2xl flex flex-col items-center justify-center gap-2 font-bold shadow-sm active:scale-95 transition">
+                    <i class="fa-brands fa-whatsapp text-3xl"></i> WhatsApp
                 </a>
-                <a href="https://instagram.com/ermotowash" target="_blank" class="bg-pink-100 text-pink-700 p-3 rounded-xl flex items-center justify-center gap-2 font-bold shadow-sm active:scale-95 transition">
-                    <i class="fa-brands fa-instagram text-lg"></i> Instagram
+                <a href="https://instagram.com/ermotowash" target="_blank" class="bg-pink-100 text-pink-700 p-4 rounded-2xl flex flex-col items-center justify-center gap-2 font-bold shadow-sm active:scale-95 transition">
+                    <i class="fa-brands fa-instagram text-3xl"></i> Instagram
                 </a>
             </div>
 
-            <h3 class="font-bold text-gray-800 mb-3"><i class="fa-solid fa-clipboard-list text-er-yellow"></i> Pesanan Saya</h3>
-            <div id="myOrdersList" class="space-y-3">
+            <h3 class="font-black text-gray-800 mb-4 text-lg"><i class="fa-solid fa-clipboard-list text-er-yellow mr-1"></i> Pesanan Saya</h3>
+            <div id="myOrdersList" class="space-y-4">
                 <p class="text-sm text-gray-500 italic text-center py-4">Belum ada pesanan.</p>
             </div>
         </div>
 
         <!-- TAB: PESAN -->
-        <div id="order" class="tab-content hidden p-4 flex flex-col h-full">
-            <h2 class="text-lg font-bold text-gray-800 mb-2"><i class="fa-solid fa-map-location-dot text-er-yellow"></i> Tentukan Lokasi Jemput</h2>
-            <p class="text-xs text-gray-500 mb-3">Ketuk peta untuk memindahkan pin lokasi motor Anda.</p>
+        <div id="order" class="hidden flex-col p-4 h-full tab-content">
+            <h2 class="text-xl font-black text-gray-800 mb-2"><i class="fa-solid fa-map-location-dot text-er-yellow mr-1"></i> Lokasi Jemput</h2>
+            <p class="text-xs text-gray-500 mb-4 bg-blue-50 p-2 rounded-lg border border-blue-100"><i class="fa-solid fa-circle-info text-blue-400 mr-1"></i> Geser pin atau <b>sentuh area peta</b> untuk memindahkan titik lokasi motor Anda.</p>
             
             <!-- Map Container -->
-            <div id="map" class="h-48 w-full rounded-xl shadow-inner border border-gray-200 mb-4 z-0"></div>
+            <div id="map" class="h-48 w-full rounded-2xl shadow-inner border-2 border-gray-200 mb-4 z-0 relative overflow-hidden"></div>
 
-            <div class="flex justify-between items-center bg-gray-50 p-3 rounded-xl border border-gray-200 mb-4">
+            <div class="flex justify-between items-center bg-gray-50 p-4 rounded-2xl border border-gray-200 mb-5 shadow-sm">
                 <div>
-                    <p class="text-xs text-gray-500">Jarak ke Steam:</p>
-                    <p class="font-bold text-gray-800" id="displayDistance">0.00 km</p>
+                    <p class="text-xs text-gray-500 font-medium mb-1">Jarak dari Steam:</p>
+                    <p class="font-black text-gray-800 text-lg" id="displayDistance">0.00 km</p>
                 </div>
-                <div class="text-right">
-                    <p class="text-xs text-gray-500">Ongkir Antar-Jemput:</p>
-                    <p class="font-bold text-green-600" id="displayOngkir">Gratis</p>
+                <div class="text-right border-l-2 pl-4 border-gray-200">
+                    <p class="text-xs text-gray-500 font-medium mb-1">Ongkir Jemput:</p>
+                    <p class="font-black text-green-600 text-lg" id="displayOngkir">Gratis</p>
                 </div>
             </div>
 
-            <input type="tel" id="orderPhone" placeholder="Nomor WA Aktif" class="w-full p-3 border border-gray-300 rounded-xl mb-3 focus:outline-none focus:border-er-yellow text-sm">
-            <textarea id="orderDetail" rows="2" placeholder="Detail Alamat (Contoh: Patokan depan masjid, motor CBR merah)" class="w-full p-3 border border-gray-300 rounded-xl mb-4 focus:outline-none focus:border-er-yellow text-sm"></textarea>
+            <div class="bg-gray-50 p-4 rounded-2xl border border-gray-200 mb-4">
+                <input type="tel" id="orderPhone" placeholder="Nomor WhatsApp Aktif" class="w-full p-3 border border-gray-300 rounded-xl mb-3 focus:outline-none focus:border-er-yellow text-sm font-bold bg-white">
+                <textarea id="orderDetail" rows="2" placeholder="Detail Alamat (Contoh: Patokan gang masjid, motor NMAX hitam plat F)" class="w-full p-3 border border-gray-300 rounded-xl focus:outline-none focus:border-er-yellow text-sm font-medium bg-white"></textarea>
+            </div>
 
-            <button id="btnConfirmOrder" class="w-full bg-er-dark text-er-yellow font-bold py-3 rounded-xl shadow-md active:scale-95 transition-transform mt-auto">Konfirmasi Pesanan</button>
+            <!-- Rincian Biaya -->
+            <div class="bg-white border-2 border-dashed border-gray-200 p-4 rounded-2xl space-y-2 mt-auto mb-4">
+                <div class="flex justify-between text-sm font-bold text-gray-600">
+                    <p>Biaya Cuci:</p>
+                    <p>Rp 15.000</p>
+                </div>
+                <div class="flex justify-between text-sm font-bold text-gray-600">
+                    <p>Ongkos Antar-Jemput:</p>
+                    <p id="displayOngkirBottom">Gratis</p>
+                </div>
+                <div class="flex justify-between text-xl font-black text-green-600 border-t border-gray-200 pt-2 mt-2">
+                    <p>Total Tagihan:</p>
+                    <p id="displayTotal">Rp 15.000</p>
+                </div>
+            </div>
+
+            <button id="btnConfirmOrder" class="w-full bg-er-dark text-er-yellow font-black text-lg py-4 rounded-2xl shadow-lg active:scale-95 transition-transform"><i class="fa-solid fa-paper-plane mr-2"></i> Konfirmasi Pesanan</button>
         </div>
 
         <!-- TAB: TOKO -->
-        <div id="shop" class="tab-content hidden p-4">
-            <h2 class="text-lg font-bold text-gray-800 mb-4"><i class="fa-solid fa-store text-er-yellow"></i> Toko Produk</h2>
-            <div id="productList" class="grid grid-cols-2 gap-3">
+        <div id="shop" class="hidden flex-col p-4 tab-content">
+            <h2 class="text-xl font-black text-gray-800 mb-6"><i class="fa-solid fa-store text-er-yellow mr-1"></i> Toko Perawatan</h2>
+            <div id="productList" class="grid grid-cols-2 gap-4">
                 <p class="text-sm text-gray-500 italic text-center col-span-2">Memuat produk...</p>
             </div>
         </div>
 
-        <!-- TAB: CHAT -->
-        <div id="chat" class="tab-content hidden flex flex-col h-full bg-gray-50">
-            <div class="p-3 bg-white border-b border-gray-200 flex items-center justify-between shadow-sm">
-                <h2 class="font-bold text-gray-800"><i class="fa-solid fa-comments text-er-yellow"></i> Live Chat</h2>
-                <span class="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full font-bold">Online</span>
+        <!-- TAB: CHAT (Shopee Style) -->
+        <div id="chat" class="hidden flex-col h-full bg-gray-50 tab-content relative">
+            <!-- Header Chat -->
+            <div class="p-4 bg-white border-b border-gray-200 flex items-center justify-between shadow-sm z-10 relative">
+                <div class="flex items-center gap-3">
+                    <button id="btnBackChat" class="hidden text-gray-600 hover:text-gray-900 bg-gray-100 w-8 h-8 rounded-full flex items-center justify-center"><i class="fa-solid fa-arrow-left"></i></button>
+                    <h2 class="font-black text-gray-800 text-lg" id="chatTitle"><i class="fa-solid fa-comments text-er-yellow mr-1"></i> Live Chat CS</h2>
+                </div>
+                <span class="text-[10px] bg-green-100 text-green-700 px-3 py-1 rounded-full font-bold border border-green-200"><i class="fa-solid fa-circle text-[8px] mr-1"></i>Online</span>
             </div>
             
-            <div id="chatMessages" class="flex-1 overflow-y-auto p-4 space-y-3 flex flex-col">
-                <p class="text-sm text-gray-500 italic text-center py-4">Memuat chat...</p>
+            <!-- Daftar Kontak (HANYA UNTUK ADMIN) -->
+            <div id="chatContactList" class="flex-1 overflow-y-auto p-2 space-y-1 hidden bg-white">
+                <p class="text-sm text-gray-500 italic text-center py-4">Memuat pesan masuk...</p>
             </div>
 
-            <div class="p-3 bg-white border-t border-gray-200 flex gap-2">
-                <input type="text" id="chatInput" placeholder="Ketik pesan..." class="flex-1 p-2 border border-gray-300 rounded-xl focus:outline-none focus:border-er-yellow text-sm">
-                <button id="btnSendChat" class="bg-er-dark text-er-yellow px-4 rounded-xl font-bold active:scale-95 transition-transform"><i class="fa-solid fa-paper-plane"></i></button>
+            <!-- Ruang Obrolan (Pesan) -->
+            <div id="chatRoom" class="flex-1 overflow-y-auto p-4 space-y-3 flex flex-col w-full bg-[url('https://i.pinimg.com/736x/8c/98/99/8c98994518b575bfd8c949e91d20548b.jpg')] bg-cover bg-center">
+                <!-- Pesan akan muncul disini -->
+            </div>
+
+            <!-- Input Pesan -->
+            <div id="chatInputContainer" class="p-3 bg-white border-t border-gray-200 flex gap-2 shadow-[0_-5px_15px_rgba(0,0,0,0.05)] z-10 relative pb-6">
+                <input type="text" id="chatInput" placeholder="Tulis pesan Anda disini..." class="flex-1 p-3 border border-gray-300 rounded-2xl focus:outline-none focus:border-er-yellow text-sm shadow-inner bg-gray-50">
+                <button id="btnSendChat" class="bg-er-dark text-er-yellow px-6 rounded-2xl font-bold shadow-md active:scale-95 transition-transform"><i class="fa-solid fa-paper-plane text-lg"></i></button>
             </div>
         </div>
 
-        <!-- TAB: ADMIN (RAHASIA) -->
-        <div id="admin" class="tab-content hidden p-4 bg-gray-100">
-            <h2 class="text-xl font-bold text-red-600 mb-4"><i class="fa-solid fa-shield-halved"></i> Panel Admin</h2>
+        <!-- TAB: ADMIN -->
+        <div id="admin" class="hidden flex-col p-4 bg-gray-100 tab-content">
+            <h2 class="text-2xl font-black text-red-600 mb-6"><i class="fa-solid fa-shield-halved mr-1"></i> Panel Admin</h2>
             
-            <!-- Pengaturan -->
-            <div class="bg-white p-4 rounded-xl shadow-sm mb-4 border border-gray-200">
-                <h3 class="font-bold text-gray-800 mb-3 border-b pb-2">Pengaturan Tarif</h3>
-                <label class="text-xs text-gray-500 block mb-1">Harga Ongkir per 100 Meter (Setelah 500m pertama)</label>
-                <div class="flex gap-2">
-                    <input type="number" id="adminPricePer100m" class="flex-1 border p-2 rounded-lg text-sm" placeholder="Rp 500">
-                    <button id="btnUpdatePrice" class="bg-blue-600 text-white px-3 rounded-lg text-sm font-bold">Simpan</button>
+            <!-- Pengaturan Sistem -->
+            <div class="bg-white p-5 rounded-2xl shadow-sm mb-6 border border-gray-200">
+                <h3 class="font-black text-gray-800 mb-4 border-b pb-2"><i class="fa-solid fa-gears text-gray-400 mr-1"></i> Pengaturan Sistem</h3>
+                
+                <label class="text-xs text-gray-500 block mb-2 font-bold uppercase tracking-wide">Tampilan Beranda (Promo / Default)</label>
+                <div class="flex gap-2 mb-4">
+                    <select id="adminPromoType" class="flex-1 border-2 border-gray-200 p-3 rounded-xl text-sm font-bold bg-gray-50 outline-none focus:border-er-yellow">
+                        <option value="text">Tampilkan Teks Promo</option>
+                        <option value="image">Tampilkan Gambar Default</option>
+                    </select>
                 </div>
+                <input type="text" id="adminPromoTitle" placeholder="Judul Promo (Contoh: Diskon 10%)" class="w-full border-2 border-gray-200 p-3 rounded-xl text-sm mb-3 hidden font-bold outline-none focus:border-er-yellow">
+                <input type="text" id="adminPromoDesc" placeholder="Deskripsi Promo" class="w-full border-2 border-gray-200 p-3 rounded-xl text-sm mb-4 hidden outline-none focus:border-er-yellow">
+                
+                <label class="text-xs text-gray-500 block mb-2 font-bold uppercase tracking-wide border-t pt-4">Tarif Ongkir per 100 Meter (Setelah 500m pertama)</label>
+                <div class="flex gap-2">
+                    <input type="number" id="adminPricePer100m" class="flex-1 border-2 border-gray-200 p-3 rounded-xl text-lg bg-gray-50 font-black outline-none focus:border-blue-500 text-blue-600" placeholder="Rp 500">
+                </div>
+                
+                <button id="btnUpdateSettings" class="w-full bg-blue-600 text-white py-4 rounded-xl text-sm font-black mt-5 shadow-lg active:scale-95 transition-transform uppercase tracking-wider"><i class="fa-solid fa-save mr-1"></i> Simpan Pengaturan</button>
             </div>
 
             <!-- Pesanan Masuk -->
-            <h3 class="font-bold text-gray-800 mb-3"><i class="fa-solid fa-bell text-red-500"></i> Daftar Pesanan Masuk</h3>
-            <div id="adminOrdersList" class="space-y-3 mb-6"></div>
+            <h3 class="font-black text-gray-800 mb-4 text-lg"><i class="fa-solid fa-bell text-red-500 mr-1"></i> Daftar Pesanan Masuk</h3>
+            <div id="adminOrdersList" class="space-y-4 mb-8"></div>
 
-            <!-- Tambah Produk -->
-            <div class="bg-white p-4 rounded-xl shadow-sm mb-4 border border-gray-200">
-                <h3 class="font-bold text-gray-800 mb-3 border-b pb-2">Manajemen Toko</h3>
-                <input type="text" id="adminProdName" placeholder="Nama Produk" class="w-full border p-2 rounded-lg text-sm mb-2">
-                <input type="number" id="adminProdPrice" placeholder="Harga (Angka saja)" class="w-full border p-2 rounded-lg text-sm mb-2">
-                <input type="text" id="adminProdDesc" placeholder="Deskripsi Singkat" class="w-full border p-2 rounded-lg text-sm mb-2">
-                <button id="btnAddProduct" class="w-full bg-green-600 text-white py-2 rounded-lg text-sm font-bold mt-2">Tambah Produk</button>
+            <!-- Manajemen Toko -->
+            <div class="bg-white p-5 rounded-2xl shadow-sm mb-6 border border-gray-200">
+                <h3 class="font-black text-gray-800 mb-4 border-b pb-2"><i class="fa-solid fa-box-open text-orange-500 mr-1"></i> Tambah Produk Toko</h3>
+                <input type="text" id="adminProdName" placeholder="Nama Produk (Misal: Pengkilap Motor)" class="w-full border-2 border-gray-200 p-3 rounded-xl text-sm mb-3 font-bold bg-gray-50 focus:outline-none focus:border-green-500">
+                <input type="number" id="adminProdPrice" placeholder="Harga Jual (Angka saja, misal: 25000)" class="w-full border-2 border-gray-200 p-3 rounded-xl text-sm mb-3 font-bold bg-gray-50 focus:outline-none focus:border-green-500 text-green-600">
+                <textarea id="adminProdDesc" placeholder="Deskripsi Produk..." rows="2" class="w-full border-2 border-gray-200 p-3 rounded-xl text-sm mb-3 font-medium bg-gray-50 focus:outline-none focus:border-green-500"></textarea>
+                <button id="btnAddProduct" class="w-full bg-green-600 text-white py-4 rounded-xl text-sm font-black mt-2 shadow-lg active:scale-95 transition-transform uppercase tracking-wider"><i class="fa-solid fa-plus mr-1"></i> Tambah Ke Toko</button>
             </div>
             
-            <h3 class="font-bold text-gray-800 mb-3">Daftar Produk Aktif</h3>
-            <div id="adminProductList" class="space-y-2 mb-6"></div>
+            <h3 class="font-black text-gray-800 mb-4 text-lg"><i class="fa-solid fa-tags text-orange-500 mr-1"></i> Daftar Produk Aktif</h3>
+            <div id="adminProductList" class="space-y-3 mb-8"></div>
         </div>
 
     </main>
 
     <!-- BOTTOM NAVIGATION -->
-    <nav class="bg-white border-t border-gray-200 flex-shrink-0 z-50" id="bottomNav" style="display: none;">
+    <nav class="bg-white border-t border-gray-200 flex-shrink-0 z-50 shadow-[0_-2px_10px_rgba(0,0,0,0.05)] pb-safe" id="bottomNav" style="display: none;">
         <div class="max-w-md mx-auto flex justify-around">
-            <button class="nav-btn flex-1 py-3 text-center text-gray-400 hover:text-er-dark transition flex flex-col items-center gap-1 text-er-dark" data-target="home">
-                <i class="fa-solid fa-house text-xl"></i><span class="text-[10px] font-semibold">Beranda</span>
+            <button class="nav-btn flex-1 py-4 text-center text-gray-400 hover:text-er-dark transition flex flex-col items-center gap-1 text-er-dark" data-target="home">
+                <i class="fa-solid fa-house text-xl mb-1"></i><span class="text-[10px] font-bold tracking-wide">Beranda</span>
             </button>
-            <button class="nav-btn flex-1 py-3 text-center text-gray-400 hover:text-er-dark transition flex flex-col items-center gap-1" data-target="order">
-                <i class="fa-solid fa-motorcycle text-xl"></i><span class="text-[10px] font-semibold">Pesan</span>
+            <button class="nav-btn flex-1 py-4 text-center text-gray-400 hover:text-er-dark transition flex flex-col items-center gap-1" data-target="order">
+                <i class="fa-solid fa-motorcycle text-xl mb-1"></i><span class="text-[10px] font-bold tracking-wide">Pesan</span>
             </button>
-            <button class="nav-btn flex-1 py-3 text-center text-gray-400 hover:text-er-dark transition flex flex-col items-center gap-1" data-target="shop">
-                <i class="fa-solid fa-store text-xl"></i><span class="text-[10px] font-semibold">Toko</span>
+            <button class="nav-btn flex-1 py-4 text-center text-gray-400 hover:text-er-dark transition flex flex-col items-center gap-1" data-target="shop">
+                <i class="fa-solid fa-store text-xl mb-1"></i><span class="text-[10px] font-bold tracking-wide">Toko</span>
             </button>
-            <button class="nav-btn flex-1 py-3 text-center text-gray-400 hover:text-er-dark transition flex flex-col items-center gap-1 relative" data-target="chat">
-                <i class="fa-solid fa-comments text-xl"></i><span class="text-[10px] font-semibold">Chat</span>
+            <button class="nav-btn flex-1 py-4 text-center text-gray-400 hover:text-er-dark transition flex flex-col items-center gap-1 relative" data-target="chat">
+                <i class="fa-solid fa-comments text-xl mb-1"></i><span class="text-[10px] font-bold tracking-wide">Chat</span>
             </button>
         </div>
     </nav>
 
     <!-- ADMIN PIN MODAL -->
-    <div id="adminModal" class="fixed inset-0 bg-black bg-opacity-60 z-[60] hidden flex items-center justify-center px-4">
-        <div class="bg-white p-6 rounded-2xl shadow-xl w-full max-w-sm text-center">
-            <h3 class="text-lg font-bold mb-4 text-gray-800"><i class="fa-solid fa-user-secret text-red-500"></i> Akses Admin</h3>
-            <input type="password" id="adminPinInput" placeholder="Masukkan PIN" class="w-full p-3 border rounded-xl text-center tracking-widest text-lg font-bold mb-4">
-            <div class="flex gap-2">
-                <button onclick="document.getElementById('adminModal').classList.add('hidden')" class="flex-1 bg-gray-200 text-gray-800 py-2 rounded-xl font-bold">Batal</button>
-                <button id="btnVerifyPin" class="flex-1 bg-red-600 text-white py-2 rounded-xl font-bold">Masuk</button>
+    <div id="adminModal" class="fixed inset-0 bg-black/70 z-[60] hidden flex items-center justify-center px-4 backdrop-blur-sm">
+        <div class="bg-white p-6 rounded-3xl shadow-2xl w-full max-w-sm text-center transform transition-all">
+            <div class="w-16 h-16 bg-red-100 text-red-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="fa-solid fa-user-secret text-3xl"></i>
+            </div>
+            <h3 class="text-xl font-black mb-2 text-gray-800">Akses Admin</h3>
+            <p class="text-xs text-gray-500 mb-6">Masukkan PIN rahasia untuk mengelola sistem.</p>
+            <input type="password" id="adminPinInput" placeholder="•••" class="w-full p-4 border-2 border-gray-200 rounded-2xl text-center tracking-[1em] text-2xl font-black mb-6 focus:border-red-500 focus:outline-none bg-gray-50">
+            <div class="flex gap-3">
+                <button id="btnCancelAdmin" class="flex-1 bg-gray-100 text-gray-700 py-4 rounded-xl font-bold hover:bg-gray-200 transition">Batal</button>
+                <button id="btnVerifyPin" class="flex-1 bg-red-600 text-white py-4 rounded-xl font-bold hover:bg-red-700 shadow-lg transition">Masuk</button>
             </div>
         </div>
+    </div>
+
+    <!-- CUSTOM CONFIRMATION MODAL -->
+    <div id="confirmModal" class="fixed inset-0 bg-black/70 z-[80] hidden flex items-center justify-center px-4 backdrop-blur-sm">
+        <div class="bg-white p-6 rounded-3xl shadow-2xl w-full max-w-sm text-center transform transition-all">
+            <div class="w-16 h-16 bg-yellow-100 text-yellow-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="fa-solid fa-triangle-exclamation text-3xl"></i>
+            </div>
+            <h3 id="confirmTitle" class="text-xl font-black mb-2 text-gray-800">Konfirmasi</h3>
+            <p id="confirmDesc" class="text-sm text-gray-500 mb-6 font-medium">Apakah Anda yakin melakukan aksi ini?</p>
+            <div class="flex gap-3">
+                <button id="btnConfirmCancel" class="flex-1 bg-gray-100 text-gray-700 py-4 rounded-xl font-bold hover:bg-gray-200 transition">Batal</button>
+                <button id="btnConfirmOk" class="flex-1 bg-er-dark text-er-yellow py-4 rounded-xl font-bold hover:bg-black shadow-lg transition">Ya, Yakin</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- NOTIFIKASI TOAST -->
+    <div id="toast" class="fixed top-20 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white px-6 py-3 rounded-full shadow-2xl text-sm z-[90] flex items-center gap-3 transition-all duration-300 opacity-0 pointer-events-none scale-90">
+        <i class="fa-solid fa-circle-check text-green-400 text-lg"></i>
+        <span id="toastMsg" class="font-bold tracking-wide">Pesan</span>
     </div>
 
     <!-- Leaflet JS -->
@@ -199,7 +272,7 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
         import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, doc, updateDoc, deleteDoc, serverTimestamp, setDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
-        // 1. KONFIGURASI FIREBASE ANDA
+        // === 1. KONFIGURASI FIREBASE ANDA ===
         const firebaseConfig = {
             apiKey: "AIzaSyAKNv66fxKjiaD_iNoOhJq6fT4Y9R7d3rA",
             authDomain: "er-motowash.firebaseapp.com",
@@ -212,59 +285,122 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // State Aplikasi
+        // === STATE APLIKASI ===
         let currentUser = localStorage.getItem('er_user_name') || null;
         let isAdmin = false;
         let map = null, marker = null;
         let currentDistance = 0, currentOngkir = 0;
         let pricePer100m = 500; // Harga default
+        const BASE_BIAYA_CUCI = 15000;
         const ADMIN_PIN = "778899";
+        
+        let activeChatRoom = null; 
 
         // Koordinat Basecamp
         const BASE_LAT = -6.643329;
         const BASE_LNG = 106.843657;
 
-        // Fungsi Format Rupiah
+        // === FUNGSI BANTUAN ===
         const formatRp = (angka) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(angka);
+        
+        const showToast = (msg, isError = false) => {
+            const toast = document.getElementById('toast');
+            document.getElementById('toastMsg').textContent = msg;
+            toast.querySelector('i').className = isError ? "fa-solid fa-circle-exclamation text-red-400 text-lg" : "fa-solid fa-circle-check text-green-400 text-lg";
+            toast.classList.remove('opacity-0', 'scale-90');
+            toast.classList.add('opacity-100', 'scale-100');
+            setTimeout(() => { toast.classList.add('opacity-0', 'scale-90'); toast.classList.remove('opacity-100', 'scale-100'); }, 3000);
+        };
 
-        // Navigasi Tab
+        let confirmActionCb = null;
+        const showConfirm = (title, desc, actionCb) => {
+            document.getElementById('confirmTitle').textContent = title;
+            document.getElementById('confirmDesc').textContent = desc;
+            confirmActionCb = actionCb;
+            document.getElementById('confirmModal').classList.remove('hidden');
+        };
+
+        document.getElementById('btnConfirmCancel').addEventListener('click', () => {
+            document.getElementById('confirmModal').classList.add('hidden');
+            confirmActionCb = null;
+        });
+
+        document.getElementById('btnConfirmOk').addEventListener('click', () => {
+            document.getElementById('confirmModal').classList.add('hidden');
+            if(confirmActionCb) confirmActionCb();
+            confirmActionCb = null;
+        });
+
+        // === NAVIGASI TAB ===
         const switchTab = (tabId) => {
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.tab-content').forEach(el => {
+                el.classList.add('hidden');
+                el.classList.remove('active'); // Gunakan flex via custom style
+            });
             document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('text-er-dark'));
             
-            document.getElementById(tabId).classList.remove('hidden');
+            const targetEl = document.getElementById(tabId);
+            if(targetEl) {
+                targetEl.classList.remove('hidden');
+                targetEl.classList.add('active');
+            }
+            
             const activeBtn = document.querySelector(`.nav-btn[data-target="${tabId}"]`);
             if(activeBtn) activeBtn.classList.add('text-er-dark');
 
-            if (tabId === 'order' && map) setTimeout(() => map.invalidateSize(), 200);
-            if (tabId === 'chat') setTimeout(() => { const cb = document.getElementById('chatMessages'); cb.scrollTop = cb.scrollHeight; }, 100);
+            // Fix peta & scroll chat
+            if (tabId === 'order' && map) setTimeout(() => map.invalidateSize(), 300);
+            if (tabId === 'chat') {
+                if(!isAdmin) {
+                    activeChatRoom = currentUser;
+                    document.getElementById('chatContactList').classList.add('hidden');
+                    document.getElementById('chatRoom').classList.remove('hidden');
+                    document.getElementById('chatInputContainer').classList.remove('hidden');
+                    document.getElementById('btnBackChat').classList.add('hidden');
+                } else if (!activeChatRoom) {
+                    document.getElementById('chatContactList').classList.remove('hidden');
+                    document.getElementById('chatRoom').classList.add('hidden');
+                    document.getElementById('chatInputContainer').classList.add('hidden');
+                    document.getElementById('btnBackChat').classList.add('hidden');
+                    document.getElementById('chatTitle').innerHTML = '<i class="fa-solid fa-users text-er-yellow mr-1"></i> Daftar Chat';
+                }
+                setTimeout(() => { const cb = document.getElementById('chatRoom'); cb.scrollTop = cb.scrollHeight; }, 100);
+            }
         };
 
+        document.querySelectorAll('.nav-btn').addEventListener = ('click', (e) => {
+             // Logic ditangani di forEach bawah
+        });
+        
         document.querySelectorAll('.nav-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => switchTab(e.currentTarget.closest('.nav-btn').dataset.target));
+            btn.addEventListener('click', (e) => {
+                const target = e.currentTarget.dataset.target;
+                if(target) switchTab(target);
+            });
         });
 
-        // Login Logic
+        // === LOGIKA LOGIN ===
         if (currentUser) {
             document.getElementById('loginSection').classList.add('hidden');
-            document.getElementById('bottomNav').style.display = 'flex';
+            document.getElementById('bottomNav').style.display = 'block'; // Container flex nav
             document.getElementById('userGreeting').classList.remove('hidden');
             document.getElementById('displayUserName').textContent = currentUser;
+            activeChatRoom = currentUser;
             switchTab('home');
         }
 
         document.getElementById('btnLogin').addEventListener('click', () => {
             const name = document.getElementById('userNameInput').value.trim();
-            if (name) {
+            if (name.length >= 3) {
                 currentUser = name;
                 localStorage.setItem('er_user_name', name);
                 window.location.reload();
             } else {
-                alert("Masukkan nama Anda terlebih dahulu.");
+                showToast("Nama minimal 3 huruf!", true);
             }
         });
 
-        // Fitur Admin Rahasia
+        // === FITUR ADMIN ===
         let logoClicks = 0;
         let logoTimer = null;
         document.getElementById('logoTrigger').addEventListener('click', () => {
@@ -272,32 +408,78 @@
             clearTimeout(logoTimer);
             logoTimer = setTimeout(() => { logoClicks = 0; }, 2000);
             if (logoClicks >= 5) {
-                if(isAdmin) { isAdmin = false; switchTab('home'); alert("Keluar Mode Admin"); }
-                else { document.getElementById('adminModal').classList.remove('hidden'); }
+                if(isAdmin) { 
+                    isAdmin = false; 
+                    activeChatRoom = currentUser;
+                    switchTab('home'); 
+                    showToast("Keluar dari Mode Admin"); 
+                }
+                else { 
+                    document.getElementById('adminModal').classList.remove('hidden'); 
+                    setTimeout(() => document.getElementById('adminPinInput').focus(), 100);
+                }
                 logoClicks = 0;
             }
+        });
+
+        document.getElementById('btnCancelAdmin').addEventListener('click', () => {
+            document.getElementById('adminModal').classList.add('hidden');
         });
 
         document.getElementById('btnVerifyPin').addEventListener('click', () => {
             if(document.getElementById('adminPinInput').value === ADMIN_PIN) {
                 isAdmin = true;
+                activeChatRoom = null;
                 document.getElementById('adminModal').classList.add('hidden');
                 switchTab('admin');
-                alert("Berhasil masuk Admin!");
+                showToast("Berhasil masuk Sistem Admin!");
             } else {
-                alert("PIN Salah!");
+                showToast("PIN Anda Salah!", true);
             }
             document.getElementById('adminPinInput').value = '';
         });
 
-        // Inisialisasi Peta
+        // === PENGATURAN TAMPILAN BANNER ===
+        const renderBanner = (type, title, desc) => {
+            const container = document.getElementById('bannerContainer');
+            if (type === 'image') {
+                container.innerHTML = `
+                    <div class="bg-aesthetic text-white p-6 rounded-3xl shadow-lg relative overflow-hidden h-40 flex flex-col justify-end">
+                        <div class="relative z-10">
+                            <h2 class="text-2xl font-black text-white drop-shadow-md tracking-wide">Motor Bersih,</h2>
+                            <p class="text-base text-er-yellow font-bold drop-shadow-md">Hati Senang.</p>
+                        </div>
+                    </div>`;
+            } else {
+                container.innerHTML = `
+                    <div class="bg-er-dark text-white p-6 rounded-3xl shadow-[0_10px_20px_rgba(250,204,21,0.2)] relative overflow-hidden border border-gray-800">
+                        <div class="relative z-10">
+                            <div class="bg-red-500 text-white text-[10px] font-black px-2 py-1 rounded-full inline-block mb-2 tracking-widest uppercase">PROMO HARI INI</div>
+                            <h2 class="text-2xl font-black text-er-yellow mb-1 tracking-wide">${title || 'Promo Spesial!'}</h2>
+                            <p class="text-sm text-gray-300 font-medium">${desc || 'Dapatkan penawaran menarik hari ini.'}</p>
+                        </div>
+                        <i class="fa-solid fa-bolt absolute -bottom-5 -right-3 text-8xl text-white opacity-5 transform rotate-12"></i>
+                    </div>`;
+            }
+        };
+
+        document.getElementById('adminPromoType').addEventListener('change', (e) => {
+            const isText = e.target.value === 'text';
+            document.getElementById('adminPromoTitle').classList.toggle('hidden', !isText);
+            document.getElementById('adminPromoDesc').classList.toggle('hidden', !isText);
+        });
+
+        // === PETA LOKASI ===
         function initMap() {
             if(map) return;
             map = L.map('map').setView([BASE_LAT, BASE_LNG], 15);
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap' }).addTo(map);
             
-            L.marker([BASE_LAT, BASE_LNG]).addTo(map).bindPopup("<b>ER Motowash</b>").openPopup();
-            marker = L.marker([BASE_LAT + 0.002, BASE_LNG + 0.002], {draggable: true}).addTo(map);
+            const steamIcon = L.divIcon({ html: '<i class="fa-solid fa-shop text-blue-600 text-3xl drop-shadow-md"></i>', className: 'bg-transparent', iconSize: [30, 30], iconAnchor: [15, 30] });
+            L.marker([BASE_LAT, BASE_LNG], {icon: steamIcon}).addTo(map).bindPopup("<b>ER Motowash</b>").openPopup();
+            
+            const bikeIcon = L.divIcon({ html: '<i class="fa-solid fa-location-dot text-red-500 text-4xl drop-shadow-lg"></i>', className: 'bg-transparent', iconSize: [30, 40], iconAnchor: [15, 40] });
+            marker = L.marker([BASE_LAT + 0.002, BASE_LNG + 0.002], {icon: bikeIcon, draggable: true}).addTo(map);
             
             const updateLocation = (latlng) => {
                 const dist = map.distance([BASE_LAT, BASE_LNG], latlng);
@@ -311,7 +493,10 @@
                 }
 
                 document.getElementById('displayDistance').textContent = currentDistance.toFixed(2) + " km";
-                document.getElementById('displayOngkir').textContent = currentOngkir === 0 ? "Gratis" : formatRp(currentOngkir);
+                const ongkirText = currentOngkir === 0 ? "Gratis" : formatRp(currentOngkir);
+                document.getElementById('displayOngkir').textContent = ongkirText;
+                document.getElementById('displayOngkirBottom').textContent = ongkirText;
+                document.getElementById('displayTotal').textContent = formatRp(BASE_BIAYA_CUCI + currentOngkir);
             };
 
             marker.on('dragend', function () { updateLocation(marker.getLatLng()); });
@@ -320,11 +505,48 @@
         }
         initMap();
 
-        // 1. Pesanan
+        // === LOGIKA FIREBASE ===
+
+        // 1. Pengaturan Harga & Banner
+        const settingsDoc = doc(db, "settings", "global");
+        onSnapshot(settingsDoc, (docSnap) => {
+            if(docSnap.exists()) {
+                const data = docSnap.data();
+                pricePer100m = data.pricePer100m || 500;
+                document.getElementById('adminPricePer100m').value = pricePer100m;
+                if(marker) marker.fire('dragend'); 
+                
+                const type = data.promoType || 'image';
+                document.getElementById('adminPromoType').value = type;
+                document.getElementById('adminPromoTitle').value = data.promoTitle || '';
+                document.getElementById('adminPromoDesc').value = data.promoDesc || '';
+                document.getElementById('adminPromoType').dispatchEvent(new Event('change'));
+                
+                renderBanner(type, data.promoTitle, data.promoDesc);
+            } else {
+                renderBanner('image', '', '');
+            }
+        });
+
+        document.getElementById('btnUpdateSettings').addEventListener('click', async () => {
+            const newPrice = Number(document.getElementById('adminPricePer100m').value);
+            const pType = document.getElementById('adminPromoType').value;
+            const pTitle = document.getElementById('adminPromoTitle').value;
+            const pDesc = document.getElementById('adminPromoDesc').value;
+
+            const newData = { pricePer100m: newPrice, promoType: pType, promoTitle: pTitle, promoDesc: pDesc };
+            await updateDoc(settingsDoc, newData).catch(async () => { await setDoc(settingsDoc, newData); });
+            showToast("Pengaturan berhasil disimpan!");
+        });
+
+        // 2. Transaksi Pemesanan
         document.getElementById('btnConfirmOrder').addEventListener('click', async () => {
-            const phone = document.getElementById('orderPhone').value;
-            const detail = document.getElementById('orderDetail').value;
-            if(!phone || !detail) return alert("Lengkapi No WA dan Detail Alamat!");
+            const phone = document.getElementById('orderPhone').value.trim();
+            const detail = document.getElementById('orderDetail').value.trim();
+            if(!phone || !detail) {
+                showToast("Nomor WA dan Detail Alamat wajib diisi!", true);
+                return;
+            }
 
             const latlng = marker.getLatLng();
             await addDoc(collection(db, "orders"), {
@@ -335,16 +557,18 @@
                 lng: latlng.lng,
                 distance: currentDistance,
                 ongkirFee: currentOngkir,
+                washFee: BASE_BIAYA_CUCI,
+                totalFee: BASE_BIAYA_CUCI + currentOngkir,
                 status: "Menunggu Penjemputan",
                 timestamp: serverTimestamp()
             });
 
-            alert("Pesanan berhasil dibuat!");
-            document.getElementById('orderPhone').value = '';
+            showToast("Mantap! Pesanan terkirim ke Admin.");
             document.getElementById('orderDetail').value = '';
             switchTab('home');
         });
 
+        // Monitor Pesanan
         const qOrders = query(collection(db, "orders"), orderBy("timestamp", "desc"));
         onSnapshot(qOrders, (snapshot) => {
             let myOrdersHTML = "";
@@ -353,48 +577,88 @@
             snapshot.forEach((docSnap) => {
                 const order = docSnap.data();
                 const id = docSnap.id;
+                const timeStr = order.timestamp ? new Date(order.timestamp.toDate()).toLocaleTimeString('id-ID', {hour: '2-digit', minute:'2-digit'}) : 'Baru';
+                const dateStr = order.timestamp ? new Date(order.timestamp.toDate()).toLocaleDateString('id-ID') : '';
                 
+                // Card Pelanggan
                 if(order.customerName === currentUser) {
-                    let color = order.status === "Selesai" ? "bg-green-100 text-green-800" : "bg-yellow-100 text-yellow-800";
+                    let color = "bg-yellow-100 text-yellow-800 border-yellow-200";
+                    if(order.status === "OTW Jemput") color = "bg-blue-100 text-blue-800 border-blue-200";
+                    if(order.status === "Cuci") color = "bg-purple-100 text-purple-800 border-purple-200";
+                    if(order.status === "OTW Antar") color = "bg-orange-100 text-orange-800 border-orange-200";
+                    
                     myOrdersHTML += `
-                        <div class="border border-gray-200 rounded-xl p-3 bg-gray-50 flex justify-between items-center">
-                            <div>
-                                <p class="text-xs text-gray-500">${order.timestamp ? new Date(order.timestamp.toDate()).toLocaleDateString('id-ID') : 'Baru saja'}</p>
-                                <p class="font-bold text-gray-800">Ongkir: ${order.ongkirFee === 0 ? 'Gratis' : formatRp(order.ongkirFee)}</p>
+                        <div class="border border-gray-200 rounded-2xl p-4 bg-white shadow-sm flex flex-col gap-3 relative overflow-hidden">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <p class="font-black text-gray-800 text-lg tracking-tight">${formatRp(order.totalFee)}</p>
+                                    <p class="text-xs text-gray-500 font-medium">${dateStr} • ${timeStr}</p>
+                                </div>
+                                <span class="${color} text-[10px] px-3 py-1.5 rounded-lg font-black border shadow-sm uppercase tracking-wide">${order.status}</span>
                             </div>
-                            <span class="${color} text-[10px] px-2 py-1 rounded font-bold">${order.status}</span>
+                            <div class="text-[11px] text-gray-500 bg-gray-50 p-3 rounded-xl border border-gray-100 font-medium">
+                                <span class="font-bold text-gray-700">Rincian:</span> Cuci (Rp 15rb) + Ongkir (${order.ongkirFee === 0 ? 'Gratis' : formatRp(order.ongkirFee)})
+                            </div>
                         </div>`;
                 }
 
+                // Card Admin
                 adminOrdersHTML += `
-                    <div class="border border-gray-200 rounded-xl p-3 bg-white shadow-sm">
-                        <div class="flex justify-between items-start mb-2">
-                            <div>
-                                <p class="font-bold text-gray-800">${order.customerName}</p>
-                                <p class="text-xs text-gray-500"><i class="fa-solid fa-phone"></i> ${order.phone}</p>
+                    <div class="border-2 border-gray-100 rounded-2xl p-4 bg-white shadow-sm hover:border-er-yellow transition">
+                        <div class="flex flex-col gap-2 mb-3 border-b border-gray-100 pb-3">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <p class="font-black text-gray-800 text-base uppercase tracking-tight"><i class="fa-solid fa-user text-gray-400 mr-1"></i> ${order.customerName}</p>
+                                    <p class="text-sm text-blue-600 font-bold mt-1"><i class="fa-brands fa-whatsapp mr-1"></i> ${order.phone}</p>
+                                </div>
+                                <p class="text-xs text-gray-400 font-bold text-right">${timeStr}</p>
                             </div>
-                            <select class="text-xs border rounded p-1 font-bold ${order.status === 'Selesai' ? 'text-green-600' : 'text-orange-600'}" onchange="window.updateOrderStatus('${id}', this.value)">
-                                <option value="Menunggu Penjemputan" ${order.status === 'Menunggu Penjemputan' ? 'selected' : ''}>Menunggu</option>
+                            
+                            <select class="w-full text-sm border-2 rounded-xl p-2 font-black outline-none cursor-pointer border-gray-300 text-gray-700 focus:border-blue-500" onchange="window.updateOrderStatus('${id}', this.value)">
+                                <option value="" disabled selected>-- Ubah Status --</option>
+                                <option value="Menunggu Penjemputan" ${order.status === 'Menunggu Penjemputan' ? 'selected' : ''}>Menunggu Penjemputan</option>
                                 <option value="OTW Jemput" ${order.status === 'OTW Jemput' ? 'selected' : ''}>OTW Jemput</option>
-                                <option value="Selesai" ${order.status === 'Selesai' ? 'selected' : ''}>Selesai</option>
+                                <option value="Cuci" ${order.status === 'Cuci' ? 'selected' : ''}>Sedang Dicuci</option>
+                                <option value="OTW Antar" ${order.status === 'OTW Antar' ? 'selected' : ''}>OTW Antar</option>
+                                <option value="Selesai" class="text-red-600">Selesaikan & Hapus</option>
                             </select>
                         </div>
-                        <p class="text-xs text-gray-600 mb-2">${order.addressDetail}</p>
-                        <a href="https://www.google.com/maps/search/?api=1&query=${order.lat},${order.lng}" target="_blank" class="text-xs text-blue-600 font-bold"><i class="fa-solid fa-map-location-dot"></i> Buka Maps</a>
+                        <p class="text-xs text-gray-600 mb-3 bg-gray-50 p-3 rounded-xl font-medium border border-gray-100"><i class="fa-solid fa-location-dot text-red-400 mr-1"></i> "${order.addressDetail}"</p>
+                        <div class="flex justify-between items-center mb-3 px-1">
+                            <span class="text-xs font-bold text-gray-500">Jarak: ${order.distance.toFixed(1)}km</span>
+                            <span class="text-base font-black text-green-600">${formatRp(order.totalFee)}</span>
+                        </div>
+                        <a href="https://www.google.com/maps/search/?api=1&query=${order.lat},${order.lng}" target="_blank" class="block text-center bg-blue-50 text-blue-600 hover:bg-blue-100 py-3 rounded-xl text-xs font-bold transition"><i class="fa-solid fa-paper-plane mr-1"></i> Buka Google Maps</a>
                     </div>`;
             });
 
-            document.getElementById('myOrdersList').innerHTML = myOrdersHTML || '<p class="text-sm text-gray-500 italic text-center py-4">Belum ada pesanan.</p>';
-            document.getElementById('adminOrdersList').innerHTML = adminOrdersHTML || '<p class="text-sm text-gray-500 italic text-center">Belum ada pesanan.</p>';
+            document.getElementById('myOrdersList').innerHTML = myOrdersHTML || '<div class="text-center py-8 bg-gray-50 rounded-2xl border-2 border-dashed border-gray-200"><i class="fa-solid fa-motorcycle text-gray-300 text-4xl mb-3"></i><p class="text-sm text-gray-500 font-bold">Belum ada riwayat pesanan.</p></div>';
+            document.getElementById('adminOrdersList').innerHTML = adminOrdersHTML || '<div class="text-center py-8 bg-gray-50 rounded-2xl border-2 border-dashed border-gray-200"><i class="fa-solid fa-mug-hot text-gray-300 text-4xl mb-3"></i><p class="text-sm text-gray-500 font-bold">Belum ada pesanan masuk.</p></div>';
         });
 
-        window.updateOrderStatus = async (id, newStatus) => { await updateDoc(doc(db, "orders", id), { status: newStatus }); };
+        // Fungsi Update Status / Hapus Otomatis (Global agar bisa diakses dari HTML)
+        window.updateOrderStatus = (id, newStatus) => { 
+            if(newStatus === 'Selesai') {
+                showConfirm("Selesaikan Pesanan?", "Pesanan yang selesai akan dihapus dari sistem agar memori tetap lega.", async () => {
+                    await deleteDoc(doc(db, "orders", id));
+                    showToast("Pesanan selesai & riwayat dihapus!");
+                });
+            } else {
+                updateDoc(doc(db, "orders", id), { status: newStatus }).then(() => {
+                    showToast("Status Pesanan Diperbarui!");
+                });
+            }
+        };
 
-        // 2. Chat
+        // 3. Obrolan 1 Lawan 1
+        let allChats = [];
+        
         document.getElementById('btnSendChat').addEventListener('click', async () => {
             const text = document.getElementById('chatInput').value.trim();
-            if(!text) return;
+            if(!text || !activeChatRoom) return;
+            
             await addDoc(collection(db, "chats"), {
+                room: activeChatRoom,
                 sender: isAdmin ? "Admin" : currentUser,
                 text: text,
                 timestamp: serverTimestamp()
@@ -404,81 +668,140 @@
 
         const qChats = query(collection(db, "chats"), orderBy("timestamp", "asc"));
         onSnapshot(qChats, (snapshot) => {
-            let chatHTML = "";
-            snapshot.forEach((docSnap) => {
-                const chat = docSnap.data();
-                const isMe = chat.sender === (isAdmin ? "Admin" : currentUser);
-                
-                chatHTML += `
-                    <div class="flex flex-col ${isMe ? 'items-end' : 'items-start'}">
-                        <span class="text-[10px] text-gray-400 mb-1 ml-1">${chat.sender}</span>
-                        <div class="${isMe ? 'bg-er-dark text-white' : 'bg-white border border-gray-200 text-gray-800'} px-4 py-2 rounded-2xl max-w-[80%] text-sm shadow-sm">
-                            ${chat.text}
-                        </div>
-                    </div>`;
-            });
-            const chatContainer = document.getElementById('chatMessages');
-            chatContainer.innerHTML = chatHTML || '<p class="text-sm text-gray-500 italic text-center py-4">Mulai percakapan...</p>';
-            chatContainer.scrollTop = chatContainer.scrollHeight;
+            allChats = [];
+            snapshot.forEach(doc => allChats.push(doc.data()));
+            renderChatUI();
         });
 
-        // 3. Toko
+        document.getElementById('btnBackChat').addEventListener('click', () => {
+            activeChatRoom = null;
+            document.getElementById('chatContactList').classList.remove('hidden');
+            document.getElementById('chatRoom').classList.add('hidden');
+            document.getElementById('chatInputContainer').classList.add('hidden');
+            document.getElementById('btnBackChat').classList.add('hidden');
+            document.getElementById('chatTitle').innerHTML = '<i class="fa-solid fa-users text-er-yellow mr-1"></i> Daftar Chat';
+        });
+
+        function renderChatUI() {
+            if(!isAdmin) {
+                renderMessages(allChats.filter(c => c.room === currentUser));
+            } else {
+                if(!activeChatRoom) {
+                    const rooms = [...new Set(allChats.map(c => c.room))];
+                    let contactHTML = "";
+                    rooms.forEach(room => {
+                        const roomChats = allChats.filter(c => c.room === room);
+                        const lastChat = roomChats[roomChats.length - 1];
+                        const isUnread = lastChat.sender !== "Admin";
+                        
+                        contactHTML += `
+                            <div onclick="window.openAdminRoom('${room}')" class="flex items-center gap-4 p-4 bg-white border-b border-gray-100 cursor-pointer hover:bg-gray-50 transition">
+                                <div class="w-12 h-12 rounded-full bg-er-dark text-er-yellow flex items-center justify-center font-black text-xl shadow-inner">
+                                    ${room.charAt(0).toUpperCase()}
+                                </div>
+                                <div class="flex-1 overflow-hidden">
+                                    <div class="flex justify-between items-center mb-1">
+                                        <h4 class="font-black text-gray-800 text-base truncate">${room}</h4>
+                                        ${isUnread ? '<div class="w-3 h-3 bg-red-500 rounded-full shadow-sm"></div>' : ''}
+                                    </div>
+                                    <p class="text-sm text-gray-500 truncate ${isUnread ? 'font-bold text-gray-800' : ''}">${lastChat.sender === 'Admin' ? 'Anda: ' : ''}${lastChat.text}</p>
+                                </div>
+                            </div>`;
+                    });
+                    document.getElementById('chatContactList').innerHTML = contactHTML || '<div class="text-center py-10"><i class="fa-solid fa-inbox text-gray-300 text-4xl mb-2"></i><p class="text-sm text-gray-500 font-bold">Kotak masuk kosong.</p></div>';
+                } else {
+                    renderMessages(allChats.filter(c => c.room === activeChatRoom));
+                }
+            }
+        }
+
+        function renderMessages(messages) {
+            let chatHTML = "";
+            messages.forEach((chat) => {
+                const isMe = chat.sender === (isAdmin ? "Admin" : currentUser);
+                const timeStr = chat.timestamp ? new Date(chat.timestamp.toDate()).toLocaleTimeString('id-ID', {hour: '2-digit', minute:'2-digit'}) : '';
+                
+                chatHTML += `
+                    <div class="flex flex-col ${isMe ? 'items-end' : 'items-start'} mb-2">
+                        <div class="flex items-end gap-1 ${isMe ? 'flex-row-reverse' : 'flex-row'}">
+                            <div class="${isMe ? 'bg-er-dark text-white rounded-tl-2xl rounded-tr-2xl rounded-bl-2xl' : 'bg-white text-gray-800 border border-gray-200 rounded-tl-2xl rounded-tr-2xl rounded-br-2xl'} px-4 py-3 max-w-[250px] text-sm shadow-sm font-medium">
+                                ${chat.text}
+                            </div>
+                        </div>
+                        <span class="text-[10px] text-gray-500 mt-1 mx-1 font-bold">${timeStr}</span>
+                    </div>`;
+            });
+            
+            const chatContainer = document.getElementById('chatRoom');
+            chatContainer.innerHTML = chatHTML || '<div class="text-center my-auto"><i class="fa-solid fa-headset text-gray-300 text-5xl mb-3 drop-shadow-sm"></i><br><p class="text-xs text-gray-500 font-bold bg-white px-4 py-2 rounded-full inline-block shadow-sm">Kirim pesan pertama Anda...</p></div>';
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        window.openAdminRoom = (roomName) => {
+            activeChatRoom = roomName;
+            document.getElementById('chatContactList').classList.add('hidden');
+            document.getElementById('chatRoom').classList.remove('hidden');
+            document.getElementById('chatInputContainer').classList.remove('hidden');
+            document.getElementById('btnBackChat').classList.remove('hidden');
+            document.getElementById('chatTitle').innerHTML = `<span class="truncate max-w-[150px] inline-block align-bottom">${roomName}</span>`;
+            renderChatUI();
+        };
+
+        // 4. Toko Produk
         document.getElementById('btnAddProduct').addEventListener('click', async () => {
-            const name = document.getElementById('adminProdName').value;
-            const price = document.getElementById('adminProdPrice').value;
-            const desc = document.getElementById('adminProdDesc').value;
-            if(!name || !price) return alert("Isi Nama & Harga Produk!");
+            const name = document.getElementById('adminProdName').value.trim();
+            const price = document.getElementById('adminProdPrice').value.trim();
+            const desc = document.getElementById('adminProdDesc').value.trim();
+            if(!name || !price) {
+                showToast("Nama & Harga Produk wajib diisi!", true);
+                return;
+            }
 
             await addDoc(collection(db, "products"), { name, price: Number(price), desc });
-            document.getElementById('adminProdName').value = ''; document.getElementById('adminProdPrice').value = ''; document.getElementById('adminProdDesc').value = '';
+            document.getElementById('adminProdName').value = ''; 
+            document.getElementById('adminProdPrice').value = ''; 
+            document.getElementById('adminProdDesc').value = '';
+            showToast("Produk berhasil ditambahkan!");
         });
 
         onSnapshot(collection(db, "products"), (snapshot) => {
             let shopHTML = ""; let adminProdHTML = "";
             snapshot.forEach((docSnap) => {
                 const prod = docSnap.data(); const id = docSnap.id;
-                const waText = encodeURIComponent(`Halo ER Motowash, saya ingin membeli ${prod.name} seharga ${formatRp(prod.price)}.`);
+                const waText = encodeURIComponent(`Halo ER Motowash, saya ingin membeli produk ini:\n\n*${prod.name}*\nHarga: ${formatRp(prod.price)}\n\nApakah stoknya masih ada?`);
                 
                 shopHTML += `
-                    <div class="bg-white border border-gray-200 rounded-xl p-3 shadow-sm flex flex-col justify-between">
+                    <div class="bg-white border border-gray-100 rounded-2xl p-3 shadow-sm flex flex-col justify-between hover:shadow-md transition">
                         <div>
-                            <div class="bg-gray-100 h-24 rounded-lg flex items-center justify-center mb-2"><i class="fa-solid fa-box text-3xl text-gray-400"></i></div>
-                            <h3 class="font-bold text-gray-800 text-sm">${prod.name}</h3>
-                            <p class="text-xs text-gray-500 mb-2">${prod.desc}</p>
-                            <p class="font-bold text-er-yellow mb-3">${formatRp(prod.price)}</p>
+                            <div class="bg-gradient-to-br from-gray-50 to-gray-100 h-32 rounded-xl flex items-center justify-center mb-3 border border-gray-200">
+                                <i class="fa-solid fa-spray-can-sparkles text-5xl text-gray-300 drop-shadow-sm"></i>
+                            </div>
+                            <h3 class="font-black text-gray-800 text-sm leading-tight mb-1">${prod.name}</h3>
+                            <p class="text-[10px] text-gray-500 line-clamp-2 h-7 font-medium leading-snug">${prod.desc}</p>
+                            <p class="font-black text-er-yellow mt-2 mb-3 text-base">${formatRp(prod.price)}</p>
                         </div>
-                        <a href="https://wa.me/6281234567890?text=${waText}" target="_blank" class="bg-green-500 text-white text-center py-2 rounded-lg text-xs font-bold w-full"><i class="fa-brands fa-whatsapp"></i> Beli via WA</a>
+                        <a href="https://wa.me/6281234567890?text=${waText}" target="_blank" class="bg-[#25D366] text-white text-center py-3 rounded-xl text-xs font-bold w-full shadow-sm active:scale-95 transition flex items-center justify-center gap-1"><i class="fa-brands fa-whatsapp text-base"></i> Beli via WA</a>
                     </div>`;
 
                 adminProdHTML += `
-                    <div class="bg-white border p-2 rounded-lg flex justify-between items-center">
-                        <div><p class="font-bold text-sm">${prod.name}</p><p class="text-xs text-gray-500">${formatRp(prod.price)}</p></div>
-                        <button onclick="window.deleteProduct('${id}')" class="text-red-500"><i class="fa-solid fa-trash"></i></button>
+                    <div class="bg-white border border-gray-200 p-4 rounded-xl flex justify-between items-center shadow-sm">
+                        <div>
+                            <p class="font-black text-sm text-gray-800">${prod.name}</p>
+                            <p class="text-xs text-green-600 font-bold">${formatRp(prod.price)}</p>
+                        </div>
+                        <button onclick="window.deleteProduct('${id}')" class="text-red-500 bg-red-50 w-10 h-10 rounded-full flex items-center justify-center hover:bg-red-100 transition shadow-sm"><i class="fa-solid fa-trash"></i></button>
                     </div>`;
             });
-            document.getElementById('productList').innerHTML = shopHTML || '<p class="text-sm text-gray-500 italic col-span-2 text-center">Belum ada produk.</p>';
-            document.getElementById('adminProductList').innerHTML = adminProdHTML;
+            document.getElementById('productList').innerHTML = shopHTML || '<div class="col-span-2 text-center py-10"><i class="fa-solid fa-box-open text-gray-300 text-5xl mb-3 drop-shadow-sm"></i><p class="text-sm text-gray-500 font-bold">Belum ada produk dijual.</p></div>';
+            document.getElementById('adminProductList').innerHTML = adminProdHTML || '<p class="text-sm text-gray-500 italic bg-gray-50 p-4 rounded-xl border border-dashed border-gray-300 text-center">Toko masih kosong.</p>';
         });
 
-        window.deleteProduct = async (id) => { if(confirm("Hapus produk ini?")) await deleteDoc(doc(db, "products", id)); };
-
-        // 4. Harga
-        const settingsDoc = doc(db, "settings", "global");
-        onSnapshot(settingsDoc, (docSnap) => {
-            if(docSnap.exists()) {
-                pricePer100m = docSnap.data().pricePer100m || 500;
-                document.getElementById('adminPricePer100m').value = pricePer100m;
-                if(marker) marker.fire('dragend'); 
-            }
-        });
-
-        document.getElementById('btnUpdatePrice').addEventListener('click', async () => {
-            const newPrice = Number(document.getElementById('adminPricePer100m').value);
-            await updateDoc(settingsDoc, { pricePer100m: newPrice }).catch(async () => {
-                await setDoc(settingsDoc, { pricePer100m: newPrice });
+        window.deleteProduct = (id) => { 
+            showConfirm("Hapus Produk?", "Produk ini akan dihapus permanen dari etalase toko.", async () => {
+                await deleteDoc(doc(db, "products", id)); 
+                showToast("Produk terhapus!");
             });
-            alert("Harga berhasil disimpan!");
-        });
+        };
 
     </script>
 </body>
