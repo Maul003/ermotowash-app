@@ -23,8 +23,6 @@
     <style>
         /* Sembunyikan scrollbar tapi tetap bisa scroll */
         ::-webkit-scrollbar { width: 0px; background: transparent; }
-        .tab-content { display: none; }
-        .tab-content.active { display: block; }
         body { -webkit-tap-highlight-color: transparent; }
     </style>
 </head>
@@ -166,7 +164,7 @@
     <!-- BOTTOM NAVIGATION -->
     <nav class="bg-white border-t border-gray-200 flex-shrink-0 z-50" id="bottomNav" style="display: none;">
         <div class="max-w-md mx-auto flex justify-around">
-            <button class="nav-btn flex-1 py-3 text-center text-gray-400 hover:text-er-dark transition flex flex-col items-center gap-1 active" data-target="home">
+            <button class="nav-btn flex-1 py-3 text-center text-gray-400 hover:text-er-dark transition flex flex-col items-center gap-1 text-er-dark" data-target="home">
                 <i class="fa-solid fa-house text-xl"></i><span class="text-[10px] font-semibold">Beranda</span>
             </button>
             <button class="nav-btn flex-1 py-3 text-center text-gray-400 hover:text-er-dark transition flex flex-col items-center gap-1" data-target="order">
@@ -199,7 +197,7 @@
     <!-- FIREBASE & LOGIKA APLIKASI -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, doc, updateDoc, deleteDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, doc, updateDoc, deleteDoc, serverTimestamp, setDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
         // 1. KONFIGURASI FIREBASE ANDA
         const firebaseConfig = {
@@ -222,8 +220,8 @@
         let pricePer100m = 500; // Harga default
         const ADMIN_PIN = "778899";
 
-        // Koordinat Basecamp (GANTI DENGAN KOORDINAT ASLI STEAM ANDA)
-        const BASE_LAT = -6.643329; // Contoh koordinat (Bogor)
+        // Koordinat Basecamp
+        const BASE_LAT = -6.643329;
         const BASE_LNG = 106.843657;
 
         // Fungsi Format Rupiah
@@ -243,16 +241,16 @@
         };
 
         document.querySelectorAll('.nav-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => switchTab(e.currentTarget.dataset.target));
+            btn.addEventListener('click', (e) => switchTab(e.currentTarget.closest('.nav-btn').dataset.target));
         });
 
         // Login Logic
         if (currentUser) {
             document.getElementById('loginSection').classList.add('hidden');
-            document.getElementById('home').classList.remove('hidden');
             document.getElementById('bottomNav').style.display = 'flex';
             document.getElementById('userGreeting').classList.remove('hidden');
             document.getElementById('displayUserName').textContent = currentUser;
+            switchTab('home');
         }
 
         document.getElementById('btnLogin').addEventListener('click', () => {
@@ -266,7 +264,7 @@
             }
         });
 
-        // Fitur Admin Rahasia (Ketuk Logo 5x)
+        // Fitur Admin Rahasia
         let logoClicks = 0;
         let logoTimer = null;
         document.getElementById('logoTrigger').addEventListener('click', () => {
@@ -292,23 +290,19 @@
             document.getElementById('adminPinInput').value = '';
         });
 
-        // Inisialisasi Peta (Leaflet)
+        // Inisialisasi Peta
         function initMap() {
             if(map) return;
             map = L.map('map').setView([BASE_LAT, BASE_LNG], 15);
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap' }).addTo(map);
             
-            // Basecamp Marker
             L.marker([BASE_LAT, BASE_LNG]).addTo(map).bindPopup("<b>ER Motowash</b>").openPopup();
-
-            // Customer Marker
             marker = L.marker([BASE_LAT + 0.002, BASE_LNG + 0.002], {draggable: true}).addTo(map);
             
             const updateLocation = (latlng) => {
                 const dist = map.distance([BASE_LAT, BASE_LNG], latlng);
-                currentDistance = dist / 1000; // to KM
+                currentDistance = dist / 1000;
                 
-                // Logika Harga: 0-500m Gratis, selebihnya per 100m
                 if (currentDistance <= 0.5) {
                     currentOngkir = 0;
                 } else {
@@ -320,18 +314,13 @@
                 document.getElementById('displayOngkir').textContent = currentOngkir === 0 ? "Gratis" : formatRp(currentOngkir);
             };
 
-            marker.on('dragend', function (e) { updateLocation(marker.getLatLng()); });
-            map.on('click', function (e) {
-                marker.setLatLng(e.latlng);
-                updateLocation(e.latlng);
-            });
+            marker.on('dragend', function () { updateLocation(marker.getLatLng()); });
+            map.on('click', function (e) { marker.setLatLng(e.latlng); updateLocation(e.latlng); });
             updateLocation(marker.getLatLng());
         }
         initMap();
 
-        // ---- LOGIKA REALTIME FIREBASE ----
-
-        // 1. Pesanan (Orders)
+        // 1. Pesanan
         document.getElementById('btnConfirmOrder').addEventListener('click', async () => {
             const phone = document.getElementById('orderPhone').value;
             const detail = document.getElementById('orderDetail').value;
@@ -356,7 +345,6 @@
             switchTab('home');
         });
 
-        // Listen Pesanan
         const qOrders = query(collection(db, "orders"), orderBy("timestamp", "desc"));
         onSnapshot(qOrders, (snapshot) => {
             let myOrdersHTML = "";
@@ -366,20 +354,18 @@
                 const order = docSnap.data();
                 const id = docSnap.id;
                 
-                // Tampilan Pelanggan
                 if(order.customerName === currentUser) {
                     let color = order.status === "Selesai" ? "bg-green-100 text-green-800" : "bg-yellow-100 text-yellow-800";
                     myOrdersHTML += `
                         <div class="border border-gray-200 rounded-xl p-3 bg-gray-50 flex justify-between items-center">
                             <div>
-                                <p class="text-xs text-gray-500">${new Date(order.timestamp?.toDate()).toLocaleDateString('id-ID')}</p>
+                                <p class="text-xs text-gray-500">${order.timestamp ? new Date(order.timestamp.toDate()).toLocaleDateString('id-ID') : 'Baru saja'}</p>
                                 <p class="font-bold text-gray-800">Ongkir: ${order.ongkirFee === 0 ? 'Gratis' : formatRp(order.ongkirFee)}</p>
                             </div>
                             <span class="${color} text-[10px] px-2 py-1 rounded font-bold">${order.status}</span>
                         </div>`;
                 }
 
-                // Tampilan Admin
                 adminOrdersHTML += `
                     <div class="border border-gray-200 rounded-xl p-3 bg-white shadow-sm">
                         <div class="flex justify-between items-start mb-2">
@@ -402,11 +388,9 @@
             document.getElementById('adminOrdersList').innerHTML = adminOrdersHTML || '<p class="text-sm text-gray-500 italic text-center">Belum ada pesanan.</p>';
         });
 
-        window.updateOrderStatus = async (id, newStatus) => {
-            await updateDoc(doc(db, "orders", id), { status: newStatus });
-        };
+        window.updateOrderStatus = async (id, newStatus) => { await updateDoc(doc(db, "orders", id), { status: newStatus }); };
 
-        // 2. Chat (Obrolan Global / Room Umum untuk demo, agar simple)
+        // 2. Chat
         document.getElementById('btnSendChat').addEventListener('click', async () => {
             const text = document.getElementById('chatInput').value.trim();
             if(!text) return;
@@ -438,7 +422,7 @@
             chatContainer.scrollTop = chatContainer.scrollHeight;
         });
 
-        // 3. Toko & Produk
+        // 3. Toko
         document.getElementById('btnAddProduct').addEventListener('click', async () => {
             const name = document.getElementById('adminProdName').value;
             const price = document.getElementById('adminProdPrice').value;
@@ -446,20 +430,15 @@
             if(!name || !price) return alert("Isi Nama & Harga Produk!");
 
             await addDoc(collection(db, "products"), { name, price: Number(price), desc });
-            document.getElementById('adminProdName').value = '';
-            document.getElementById('adminProdPrice').value = '';
-            document.getElementById('adminProdDesc').value = '';
+            document.getElementById('adminProdName').value = ''; document.getElementById('adminProdPrice').value = ''; document.getElementById('adminProdDesc').value = '';
         });
 
         onSnapshot(collection(db, "products"), (snapshot) => {
-            let shopHTML = "";
-            let adminProdHTML = "";
+            let shopHTML = ""; let adminProdHTML = "";
             snapshot.forEach((docSnap) => {
-                const prod = docSnap.data();
-                const id = docSnap.id;
-                
-                // Tampilan Toko Pelanggan
+                const prod = docSnap.data(); const id = docSnap.id;
                 const waText = encodeURIComponent(`Halo ER Motowash, saya ingin membeli ${prod.name} seharga ${formatRp(prod.price)}.`);
+                
                 shopHTML += `
                     <div class="bg-white border border-gray-200 rounded-xl p-3 shadow-sm flex flex-col justify-between">
                         <div>
@@ -471,13 +450,9 @@
                         <a href="https://wa.me/6281234567890?text=${waText}" target="_blank" class="bg-green-500 text-white text-center py-2 rounded-lg text-xs font-bold w-full"><i class="fa-brands fa-whatsapp"></i> Beli via WA</a>
                     </div>`;
 
-                // Tampilan Daftar Admin
                 adminProdHTML += `
                     <div class="bg-white border p-2 rounded-lg flex justify-between items-center">
-                        <div>
-                            <p class="font-bold text-sm">${prod.name}</p>
-                            <p class="text-xs text-gray-500">${formatRp(prod.price)}</p>
-                        </div>
+                        <div><p class="font-bold text-sm">${prod.name}</p><p class="text-xs text-gray-500">${formatRp(prod.price)}</p></div>
                         <button onclick="window.deleteProduct('${id}')" class="text-red-500"><i class="fa-solid fa-trash"></i></button>
                     </div>`;
             });
@@ -485,17 +460,14 @@
             document.getElementById('adminProductList').innerHTML = adminProdHTML;
         });
 
-        window.deleteProduct = async (id) => {
-            if(confirm("Hapus produk ini?")) await deleteDoc(doc(db, "products", id));
-        };
+        window.deleteProduct = async (id) => { if(confirm("Hapus produk ini?")) await deleteDoc(doc(db, "products", id)); };
 
-        // 4. Pengaturan Harga Realtime
+        // 4. Harga
         const settingsDoc = doc(db, "settings", "global");
         onSnapshot(settingsDoc, (docSnap) => {
             if(docSnap.exists()) {
                 pricePer100m = docSnap.data().pricePer100m || 500;
                 document.getElementById('adminPricePer100m').value = pricePer100m;
-                // Update hitungan di peta jika peta sudah aktif
                 if(marker) marker.fire('dragend'); 
             }
         });
@@ -503,9 +475,9 @@
         document.getElementById('btnUpdatePrice').addEventListener('click', async () => {
             const newPrice = Number(document.getElementById('adminPricePer100m').value);
             await updateDoc(settingsDoc, { pricePer100m: newPrice }).catch(async () => {
-                await setDoc(settingsDoc, { pricePer100m: newPrice }); // Buat jika belum ada
+                await setDoc(settingsDoc, { pricePer100m: newPrice });
             });
-            alert("Harga per 100m berhasil diupdate!");
+            alert("Harga berhasil disimpan!");
         });
 
     </script>
