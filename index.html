@@ -32,10 +32,11 @@
         #map { height: 250px; z-index: 1; border-radius: 0.5rem; }
     </style>
 </head>
-<body class="bg-gray-100 h-screen flex flex-col font-sans overflow-hidden text-gray-800">
+<!-- MENGGUNAKAN h-[100dvh] AGAR COCOK DI HP -->
+<body class="bg-gray-100 h-[100dvh] flex flex-col font-sans overflow-hidden text-gray-800">
 
     <!-- HEADER APLIKASI -->
-    <header class="bg-er-dark text-white shadow-md z-50 relative">
+    <header class="bg-er-dark text-white shadow-md z-50 relative shrink-0">
         <div class="max-w-md mx-auto px-4 py-4 flex justify-between items-center">
             <!-- KLIK LOGO INI 5 KALI UNTUK MASUK MODE ADMIN -->
             <div class="flex items-center gap-2 cursor-pointer" id="logoTrigger">
@@ -48,8 +49,8 @@
         </div>
     </header>
 
-    <!-- AREA KONTEN UTAMA -->
-    <main class="flex-1 overflow-y-auto max-w-md mx-auto w-full bg-white relative pb-20 shadow-lg">
+    <!-- AREA KONTEN UTAMA (Ditambah pb-28 agar tidak tertutup nav bawah) -->
+    <main class="flex-1 overflow-y-auto max-w-md mx-auto w-full bg-white relative pb-28 shadow-lg">
         
         <!-- 1. TAB BERANDA -->
         <div id="home" class="tab-content active p-4">
@@ -131,7 +132,8 @@
                     <span class="font-black text-green-600" id="totalPayment">Rp 15.000</span>
                 </div>
 
-                <button onclick="submitOrder()" class="w-full bg-er-dark text-white py-3 rounded-lg font-bold mt-4 hover:bg-gray-800 transition">Konfirmasi Pesanan</button>
+                <!-- Ditambahkan mb-8 agar tombol lebih terangkat ke atas -->
+                <button onclick="submitOrder()" class="w-full bg-er-dark text-white py-3 rounded-lg font-bold mt-4 mb-8 hover:bg-gray-800 transition">Konfirmasi Pesanan</button>
             </div>
         </div>
 
@@ -144,7 +146,7 @@
         </div>
 
         <!-- 4. TAB CHAT (1 LAWAN 1 / SHOPEE STYLE) -->
-        <div id="chat" class="tab-content h-[calc(100vh-140px)] flex-col bg-gray-50">
+        <div id="chat" class="tab-content h-[calc(100dvh-140px)] flex-col bg-gray-50">
             <!-- Header Chat -->
             <div class="bg-white p-4 shadow-sm border-b flex items-center z-10 relative">
                 <!-- Tombol kembali (Hanya muncul untuk Admin saat masuk ke ruang chat) -->
@@ -160,12 +162,12 @@
             </div>
 
             <!-- DAFTAR KONTAK (HANYA UNTUK ADMIN) -->
-            <div id="adminChatList" class="hidden flex-1 overflow-y-auto p-4 space-y-2">
+            <div id="adminChatList" class="hidden flex-1 overflow-y-auto p-4 space-y-2 pb-24">
                 <!-- Daftar nama pelanggan yang nge-chat akan muncul di sini -->
             </div>
 
             <!-- RUANG OBROLAN (Untuk Customer, atau Admin setelah pilih kontak) -->
-            <div id="chatRoomContainer" class="flex-1 flex flex-col overflow-hidden">
+            <div id="chatRoomContainer" class="flex-1 flex flex-col overflow-hidden pb-20">
                 <div id="chatRoom" class="flex-1 overflow-y-auto p-4 space-y-4">
                     <!-- Gelembung pesan akan muncul di sini -->
                 </div>
@@ -181,7 +183,7 @@
         </div>
 
         <!-- 5. TAB ADMIN (RAHASIA) -->
-        <div id="admin" class="tab-content p-4 bg-gray-100 min-h-full">
+        <div id="admin" class="tab-content p-4 bg-gray-100 min-h-full pb-24">
             <div class="flex justify-between items-center mb-4 bg-red-600 text-white p-3 rounded-lg shadow">
                 <h2 class="text-lg font-bold"><i class="fa-solid fa-shield-halved"></i> Panel Admin</h2>
                 <span class="text-xs bg-red-800 px-2 py-1 rounded">Rahasia</span>
@@ -313,14 +315,14 @@
         let marker = null;
         let currentDistance = 0;
         let currentOngkir = 0;
-        const BASECAMP_LAT = -7.010641353377907; // GANTI INI NANTI: Latitude Lokasi Steam Motor Anda
-        const BASECAMP_LNG = 106.57877243185938; // GANTI INI NANTI: Longitude Lokasi Steam Motor Anda
+        const BASECAMP_LAT = -6.2088; // GANTI INI NANTI: Latitude Lokasi Steam Motor Anda
+        const BASECAMP_LNG = 106.8456; // GANTI INI NANTI: Longitude Lokasi Steam Motor Anda
         const BIAYA_CUCI = 15000;
 
         // --- VARIABEL RAHASIA ADMIN ---
         let logoClicks = 0;
         let logoTimer = null;
-        const ADMIN_PIN = "042024"; // Ganti dengan PIN rahasia Anda
+        const ADMIN_PIN = "778899"; // Ganti dengan PIN rahasia Anda
         
         // Data Dummy
         let bookingsData = []; 
@@ -328,8 +330,8 @@
         
         // --- DATA DINAMIS ADMIN (Pengaturan) ---
         let systemSettings = {
-            hargaPer100m: 500, // Harga default Rp 500 per 100 meter
-            waToko: "6283877724593", // Ganti dengan nomor WA Toko Asli
+            hargaPer100m: 500, // Harga default Rp 500 per 100 meter (Dihitung setelah 500m gratis)
+            waToko: "6281234567890", // Ganti dengan nomor WA Toko Asli
             promoActive: true,
             promoTitle: "Cuci Motor",
             promoHighlight: "Antar Jemput",
