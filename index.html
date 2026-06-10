@@ -91,7 +91,9 @@
             <p class="text-xs text-gray-500 mb-4 bg-blue-50 p-2 rounded-lg border border-blue-100"><i class="fa-solid fa-circle-info text-blue-400 mr-1"></i> Geser pin atau <b>sentuh area peta</b> untuk memindahkan titik lokasi motor Anda.</p>
             
             <!-- Map Container -->
-            <div id="map" class="h-48 w-full rounded-2xl shadow-inner border-2 border-gray-200 mb-4 z-0 relative overflow-hidden"></div>
+            <div id="map" class="h-48 min-h-[12rem] w-full rounded-2xl shadow-inner border-2 border-gray-200 mb-4 z-0 relative overflow-hidden bg-gray-200 flex items-center justify-center">
+                <span class="text-gray-400 font-bold text-sm"><i class="fa-solid fa-spinner fa-spin mr-2"></i>Memuat Peta...</span>
+            </div>
 
             <div class="flex justify-between items-center bg-gray-50 p-4 rounded-2xl border border-gray-200 mb-5 shadow-sm">
                 <div>
@@ -349,7 +351,12 @@
             if(activeBtn) activeBtn.classList.add('text-er-dark');
 
             // Fix peta & scroll chat
-            if (tabId === 'order' && map) setTimeout(() => map.invalidateSize(), 300);
+            if (tabId === 'order') {
+                setTimeout(() => {
+                    initMap(); // Panggil peta HANYA saat tab dibuka
+                    if(map) map.invalidateSize(); // Paksa peta menyesuaikan ukuran HP
+                }, 200);
+            }
             if (tabId === 'chat') {
                 if(!isAdmin) {
                     activeChatRoom = currentUser;
@@ -503,7 +510,7 @@
             map.on('click', function (e) { marker.setLatLng(e.latlng); updateLocation(e.latlng); });
             updateLocation(marker.getLatLng());
         }
-        initMap();
+        // initMap(); <-- BARIS INI KITA HAPUS, KARENA SUDAH DIPINDAH KE DALAM switchTab
 
         // === LOGIKA FIREBASE ===
 
